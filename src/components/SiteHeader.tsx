@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from "react-router";
 import { useSession } from "@/hooks/useSession";
 
 export function SiteHeader() {
@@ -26,7 +26,7 @@ export function SiteHeader() {
       <div className="flex items-center gap-3">
         {session ? (
           <>
-            <Link to="/dashboard" className="text-sm font-medium hover:opacity-70">
+            <Link to="/app" className="text-sm font-medium hover:opacity-70">
               Your alerts
             </Link>
             <span className="hidden font-mono text-xs text-muted-foreground sm:inline">
@@ -35,12 +35,11 @@ export function SiteHeader() {
           </>
         ) : (
           <>
-            <Link to="/auth" className="text-sm font-medium hover:opacity-70">
+            <Link to="/sign-in" className="text-sm font-medium hover:opacity-70">
               Sign in
             </Link>
             <Link
-              to="/auth"
-              search={{ mode: "signup" }}
+              to="/sign-up"
               className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90"
             >
               Start free

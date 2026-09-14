@@ -1,33 +1,16 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router";
 import { useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { HeroFareCard } from "@/components/HeroFareCard";
 import { WatchList } from "@/components/WatchList";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import { popularRoutes } from "@/lib/routes-data";
 
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Fairfare — Flight price alerts from Taipei (機票降價通知)" },
-      {
-        name: "description",
-        content:
-          "Set a target price for routes out of Taipei. Fairfare watches the cheapest fares and emails you the moment one drops into your budget.",
-      },
-      { property: "og:title", content: "Fairfare — Flight price alerts from Taipei" },
-      {
-        property: "og:description",
-        content:
-          "Pick a route from TPE, set your budget in NT$, and get an email the moment the cheapest fare hits it.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: Landing,
-});
-
-function Landing() {
+export default function Landing() {
+  useDocumentMeta(
+    "Fairfare — Flight price alerts from Taipei (機票降價通知)",
+    "Set a target price for routes out of Taipei. Fairfare watches the cheapest fares and emails you the moment one drops into your budget.",
+  );
   const navigate = useNavigate();
   const [route, setRoute] = useState("");
   const [target, setTarget] = useState("6,500");
@@ -52,7 +35,7 @@ function Landing() {
             className="mt-7 flex max-w-md flex-col gap-3 sm:flex-row"
             onSubmit={(e) => {
               e.preventDefault();
-              navigate({ to: "/auth", search: { mode: "signup" } });
+              navigate("/sign-up");
             }}
           >
             <input
@@ -102,8 +85,7 @@ function Landing() {
         <WatchList watches={popularRoutes} />
         <div className="mt-6 flex justify-center">
           <Link
-            to="/auth"
-            search={{ mode: "signup" }}
+            to="/sign-up"
             className="rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90"
           >
             Start watching free

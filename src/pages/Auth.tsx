@@ -1,34 +1,15 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 
-type AuthSearch = { mode?: "signin" | "signup" };
-
-export const Route = createFileRoute("/auth")({
-  ssr: false,
-  validateSearch: (search: Record<string, unknown>): AuthSearch => ({
-    mode: search["mode"] === "signup" ? "signup" : "signin",
-  }),
-  head: () => ({
-    meta: [
-      { title: "Sign in — Fairfare flight price alerts" },
-      {
-        name: "description",
-        content: "Sign in or create a Fairfare account to manage your Taipei flight price alerts.",
-      },
-      { property: "og:title", content: "Sign in — Fairfare" },
-      { property: "og:description", content: "Manage your Taipei flight price alerts." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: AuthPage,
-});
-
-function AuthPage() {
-  const { mode } = Route.useSearch();
+export default function AuthPage({ mode }: { mode: "signin" | "signup" }) {
+  useDocumentMeta(
+    "Sign in — Fairfare flight price alerts",
+    "Sign in or create a Fairfare account to manage your Taipei flight price alerts.",
+  );
   const navigate = useNavigate();
-  const [isSignUp, setIsSignUp] = useState(mode === "signup");
+  const isSignUp = mode === "signup";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -37,7 +18,7 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/dashboard", replace: true });
+      if (data.session) navigate("/app", { replace: true });
     });
   }, [navigate]);
 
@@ -51,21 +32,21 @@ function AuthPage() {
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: `${window.location.origin}/dashboard` },
+        options: { emailRedirectTo: `${window.location.origin}/app` },
       });
       setBusy(false);
       if (signUpError) return setError(signUpError.message);
       if (!data.session) {
         return setMessage("Check your inbox to confirm your email, then sign in.");
       }
-      navigate({ to: "/dashboard" });
+      navigate("/app");
       return;
     }
 
     const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
     if (signInError) return setError(signInError.message);
-    navigate({ to: "/dashboard" });
+    navigate("/app");
   }
 
   return (
@@ -130,9 +111,9 @@ function AuthPage() {
           <button
             type="button"
             onClick={() => {
-              setIsSignUp(!isSignUp);
               setError(null);
               setMessage(null);
+              navigate(isSignUp ? "/sign-in" : "/sign-up", { replace: true });
             }}
             className="mt-5 w-full text-sm text-muted-foreground hover:text-foreground"
           >

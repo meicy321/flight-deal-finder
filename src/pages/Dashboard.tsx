@@ -1,29 +1,18 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuthUser } from "@/components/RequireAuth";
 import { WatchList } from "@/components/WatchList";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import { popularRoutes, type FareWatch } from "@/lib/routes-data";
 
-export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({
-    meta: [
-      { title: "Your fare alerts — Fairfare" },
-      {
-        name: "description",
-        content: "Manage the Taipei routes you watch and the target price for each fare alert.",
-      },
-      { property: "og:title", content: "Your fare alerts — Fairfare" },
-      { property: "og:description", content: "Manage your Taipei flight price alerts." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: Dashboard,
-});
-
-function Dashboard() {
-  const { user } = Route.useRouteContext();
+export default function Dashboard() {
+  useDocumentMeta(
+    "Your fare alerts — Fairfare",
+    "Manage the Taipei routes you watch and the target price for each fare alert.",
+  );
+  const user = useAuthUser();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [watches, setWatches] = useState<FareWatch[]>(popularRoutes);
@@ -35,7 +24,7 @@ function Dashboard() {
     await queryClient.cancelQueries();
     queryClient.clear();
     await supabase.auth.signOut();
-    navigate({ to: "/auth", search: { mode: "signin" }, replace: true });
+    navigate("/sign-in", { replace: true });
   }
 
   function handleAdd(e: React.FormEvent) {
