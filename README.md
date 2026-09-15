@@ -22,3 +22,14 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Environment variables
+
+The app uses its own Supabase project. Set these in `.env` locally and in your hosting provider (e.g. Vercel → Project → Settings → Environment Variables):
+
+```sh
+VITE_SUPABASE_URL=https://<project-ref>.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
+```
+
+Vite inlines `VITE_*` variables at build time, so redeploy after changing them.
